@@ -1,0 +1,15 @@
+
+require_relative 'omniauth_strong_auth_oidc/version'
+require_relative 'omniauth_strong_auth_oidc/entity_statement'
+require_relative 'omniauth_strong_auth_oidc/entity_statement_fetcher'
+require_relative 'omniauth_strong_auth_oidc/jwks_cache'
+require_relative 'omniauth_strong_auth_oidc/jwks_fetcher'
+require_relative 'omniauth_strong_auth_oidc/relying_party_jwks_storage'
+require_relative 'omniauth_strong_auth_oidc/relying_party_entity_statement_generator'
+require_relative 'omniauth_strong_auth_oidc/relying_party_jwks_generator'
+require_relative 'omniauth/strategies/strong_auth_oidc'
+
+module OmniauthStrongAuthOidc
+	# gem version from `lib/omniauth_strong_auth_oidc/version.rb`
+	# kept empty module body intentionally
+end
