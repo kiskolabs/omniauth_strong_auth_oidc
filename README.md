@@ -231,7 +231,7 @@ The generated controller provides the following endpoints:
 |----------|--------------|-------------|
 | `/.well-known/openid-federation` | `application/entity-statement+jwt` | Signed entity statement JWT |
 | `/.well-known/jwks.json` | `application/json` | Public JWKS for token encryption |
-| `/.well-known/signed-jwks` | `application/jwks+jwt` | Signed JWKS JWT |
+| `/.well-known/signed-jwks.jwt` | `application/jwks+jwt` | Signed JWKS JWT |
 
 **Additional environment variable required:**
 
