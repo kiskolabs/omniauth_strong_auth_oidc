@@ -183,7 +183,65 @@ end
 ### Add Login Link to View
 
 ```erb
-<%= link_to "Sign in with Finnish Strong Authentication", user_strong_auth_oidc_omniauth_authorize_path %>## Key Storage Options
+<%= link_to "Sign in with Finnish Strong Authentication", user_strong_auth_oidc_omniauth_authorize_path %>
+```
+
+## Federation Endpoints Controller
+
+To expose the required OIDC federation endpoints (entity statement, JWKS), use the Rails generator:
+
+```bash
+rails generate omniauth_strong_auth_oidc:install \
+  --redirect_uris="https://example.com/users/auth/strong_auth_oidc/callback" \
+  --org_name="Your Organization Name" \
+  --iss="https://example.com"
+```
+
+**Generator options:**
+
+| Option | Required | Description |
+|--------|----------|-------------|
+| `--redirect_uris` | Yes | Comma-separated list of OAuth callback URLs |
+| `--org_name` | Yes | Your organization name for the entity statement |
+| `--iss` | Yes | Issuer URL (your application's base URL) |
+
+**Example with multiple redirect URIs:**
+
+```bash
+rails generate omniauth_strong_auth_oidc:install \
+  --redirect_uris="https://example.com/users/auth/strong_auth_oidc/callback,https://staging.example.com/users/auth/strong_auth_oidc/callback" \
+  --org_name="Acme Corporation" \
+  --iss="https://example.com"
+```
+
+This will:
+1. Create `app/controllers/relying_party_entity_statement_controller.rb`
+2. Add the following routes to `config/routes.rb`:
+
+```ruby
+# OIDC Federation endpoints
+get '/.well-known/openid-federation', to: 'relying_party_entity_statement#entity_statement', as: :openid_federation
+get '/.well-known/jwks.json', to: 'relying_party_entity_statement#jwks', as: :jwks
+get '/.well-known/signed-jwks.jwt', to: 'relying_party_entity_statement#signed_jwks', as: :signed_jwks
+```
+
+The generated controller provides the following endpoints:
+
+| Endpoint | Content-Type | Description |
+|----------|--------------|-------------|
+| `/.well-known/openid-federation` | `application/entity-statement+jwt` | Signed entity statement JWT |
+| `/.well-known/jwks.json` | `application/json` | Public JWKS for token encryption |
+| `/.well-known/signed-jwks` | `application/jwks+jwt` | Signed JWKS JWT |
+
+**Additional environment variable required:**
+
+```bash
+OIDC_CONFIGURATION_SIGNING_KEY_BASE64=base64_encoded_configuration_signing_key
+```
+
+This key is used to sign the entity statement and JWKS. It should be a separate RSA key pair from the signing/encryption keys used for tokens.
+
+## Key Storage Options
 
 ### Environment Storage (EnvStorage)
 

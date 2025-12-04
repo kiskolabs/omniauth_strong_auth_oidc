@@ -1,0 +1,62 @@
+# frozen_string_literal: true
+
+# Handles OIDC federation endpoints for entity statements and JWKS
+class RelyingPartyEntityStatementController < ApplicationController
+  # Return plain JWKS (for backward compatibility)
+  def jwks
+    jwks = OmniauthStrongAuthOidc::RelyingPartyJwksStorage::Base.instance.current_jwks.export
+    render json: jwks
+  rescue StandardError => e
+    Rails.logger.error "Failed to generate JWKS: #{e.message}"
+    render json: { error: 'Failed to generate JWKS' }, status: :internal_server_error
+  end
+
+  # Returns signed JWKS JWT containing the client's public keys
+  def signed_jwks
+    signed_jwks = OmniauthStrongAuthOidc::RelyingPartyJwksGenerator.new(
+      relying_party_jwks_storage: OmniauthStrongAuthOidc::RelyingPartyJwksStorage::Base.instance,
+      relying_party_configuration_jwks_storage: configuration_jwks_storage,
+      issuer: ENV.fetch("OIDC_CLIENT_ID")
+    )
+
+    render plain: signed_jwks.generate_signed, content_type: 'application/jwks+jwt'
+  rescue StandardError => e
+    Rails.logger.error "Failed to generate signed JWKS: #{e.message}"
+    render json: { error: 'Failed to generate signed JWKS' }, status: :internal_server_error
+  end
+
+  # Returns the OpenID Client Configuration including the entity statement
+  def entity_statement
+    entity_statement = OmniauthStrongAuthOidc::RelyingPartyEntityStatementGenerator.new(
+      iss: <%= iss.inspect %>,
+      org_name: <%= org_name.inspect %>,
+      client_id: ENV.fetch("OIDC_CLIENT_ID"),
+      jwks_uri: jwks_url,
+      signed_jwks_uri: signed_jwks_url,
+      redirect_uris: <%= redirect_uris_array.inspect %>,
+      configuration_jwks_storage: configuration_jwks_storage
+    )
+
+    render plain: entity_statement.generate_signed, content_type: 'application/entity-statement+jwt'
+  rescue StandardError => e
+    Rails.logger.error "Failed to generate entity statement: #{e.message}"
+    render json: { error: 'Failed to generate entity statement' }, status: :internal_server_error
+  end
+
+  private
+
+  def configuration_jwks_storage
+    @configuration_jwks_storage ||= OmniauthStrongAuthOidc::RelyingPartyJwksStorage::EnvStorage.new(
+      signing_key_env: 'OIDC_CONFIGURATION_SIGNING_KEY_BASE64',
+      encryption_key_env: nil
+    )
+  end
+
+  def jwks_url
+    url_for(action: :jwks, only_path: false)
+  end
+
+  def signed_jwks_url
+    url_for(action: :signed_jwks, only_path: false)
+  end
+end
