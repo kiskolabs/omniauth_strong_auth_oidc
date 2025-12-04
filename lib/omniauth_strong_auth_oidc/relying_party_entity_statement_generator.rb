@@ -2,12 +2,11 @@ module OmniauthStrongAuthOidc
   # Generates OpenID Federation Entity Statement for the relying party (client)
   # This statement contains client metadata and a link to the client's JWKS
   class RelyingPartyEntityStatementGenerator
-    attr_reader :iss, :org_name, :client_id, :jwks_uri, :signed_jwks_uri, :redirect_uris, :configuration_jwks_storage
+    attr_reader :iss, :org_name, :jwks_uri, :signed_jwks_uri, :redirect_uris, :configuration_jwks_storage
 
-    def initialize(iss:, org_name:, client_id:, jwks_uri:, signed_jwks_uri:, redirect_uris:, configuration_jwks_storage:)
+    def initialize(iss:, org_name:, jwks_uri:, signed_jwks_uri:, redirect_uris:, configuration_jwks_storage:)
       @iss = iss
       @org_name = org_name
-      @client_id = client_id
       @jwks_uri = jwks_uri
       @signed_jwks_uri = signed_jwks_uri
       @redirect_uris = redirect_uris

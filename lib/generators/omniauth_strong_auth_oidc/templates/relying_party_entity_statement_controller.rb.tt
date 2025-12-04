@@ -30,7 +30,6 @@ class RelyingPartyEntityStatementController < ApplicationController
     entity_statement = OmniauthStrongAuthOidc::RelyingPartyEntityStatementGenerator.new(
       iss: <%= iss.inspect %>,
       org_name: <%= org_name.inspect %>,
-      client_id: ENV.fetch("OIDC_CLIENT_ID"),
       jwks_uri: jwks_url,
       signed_jwks_uri: signed_jwks_url,
       redirect_uris: <%= redirect_uris_array.inspect %>,
