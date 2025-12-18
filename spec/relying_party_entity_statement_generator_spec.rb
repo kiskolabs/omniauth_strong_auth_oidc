@@ -14,9 +14,8 @@ RSpec.describe OmniauthStrongAuthOidc::RelyingPartyEntityStatementGenerator do
     storage
   end
 
-  let(:iss) { "https://#{ENV['APP_HOST']}" }
-  let(:org_name) { "Springvest Oyj" }
-  let(:client_id) { 'https://example.com/client' }
+  let(:iss) { "https://example.com" }
+  let(:org_name) { "Test Organization" }
   let(:jwks_uri) { 'https://example.com/oauth2/telia/jwks' }
   let(:signed_jwks_uri) { 'https://example.com/oauth2/telia/signed_jwks.jwt' }
   let(:redirect_uris) { ['https://example.com/callback'] }
@@ -33,7 +32,6 @@ RSpec.describe OmniauthStrongAuthOidc::RelyingPartyEntityStatementGenerator do
     described_class.new(
       iss: iss,
       org_name: org_name,
-      client_id: client_id,
       jwks_uri: jwks_uri,
       signed_jwks_uri: signed_jwks_uri,
       redirect_uris: redirect_uris,
