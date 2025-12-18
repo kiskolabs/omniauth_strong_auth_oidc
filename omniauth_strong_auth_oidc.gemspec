@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["dmitry@kiskolabs.com"]
 
   spec.summary       = %q{OmniAuth strategy for Strong Auth OIDC}
-  spec.description   = File.exist?("README.md") ? File.read("README.md") : spec.summary
+  spec.description   = "OmniAuth strategy for implementing strong authentication with Finnish Identification Broker Services via OpenID Connect (OIDC)."
   spec.homepage      = "https://github.com/kiskolabs/omniauth_strong_auth_oidc"
   spec.license       = "MIT"
 
